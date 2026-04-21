@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tachyon | Smart Biometric Mouse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables for Elegant Dark Theme */
+        :root {
+            --bg-color: #050505;
+            --surface: rgba(20, 20, 20, 0.8);
+            --primary: #FF0033;
+            --primary-glow: rgba(255, 0, 51, 0.4);
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
+            --font-heading: 'Orbitron', sans-serif;
+            --font-body: 'Montserrat', sans-serif;
+            --border-light: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            overflow-x: hidden;
+            font-size: 14px;
+        }
+
+        h1, h2, h3, h4 { font-family: var(--font-heading); font-weight: 700; }
+        a { text-decoration: none; color: var(--text-main); transition: color 0.3s ease; }
+        a:hover { color: var(--primary); }
+
+        .container { padding: 80px 10%; max-width: 1400px; margin: 0 auto; }
+
+        /* 1. Navigation */
+        nav {
+            position: fixed; top: 0; width: 100%; height: 64px; padding: 0 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--surface); backdrop-filter: blur(10px);
+            z-index: 1000; border-bottom: 1px solid var(--border-light);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            display: flex; align-items: center; gap: 12px; font-size: 1.25rem;
+            font-family: var(--font-heading); font-weight: 700; color: var(--text-main);
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+
+        .logo-img {
+            height: 32px;
+            width: auto;
+            object-fit: contain;
+            /* Optional: filter to make it glow slightly like the neon theme */
+            filter: drop-shadow(0 0 5px rgba(255, 0, 51, 0.4));
+        }
+
+        .nav-links {
+            display: flex; gap: 2rem; list-style: none; font-size: 11px;
+            text-transform: uppercase; letter-spacing: 0.1em; font-weight: 600;
+        }
+        .nav-links a { color: var(--text-muted); }
+
+        @media (max-width: 900px) { .nav-links { display: none; } }
+
+        .cta-btn {
+            background: var(--primary) !important; color: #fff !important;
+            border: none !important; padding: 8px 24px !important;
+            font-family: var(--font-heading) !important; font-weight: 700 !important;
+            font-size: 12px !important; text-transform: uppercase !important;
+            cursor: pointer !important; transition: all 0.3s ease !important;
+            box-shadow: 0 0 15px var(--primary-glow) !important;
+            letter-spacing: 0 !important;
+        }
+        .cta-btn:hover { filter: brightness(1.25); transform: translateY(-1px) !important; }
+
+        /* 2. Hero Section */
+        .hero {
+            min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
+            align-items: center; gap: 40px; padding: 0 10%; margin-top: 0;
+            background: var(--bg-color);
+        }
+
+        .hero-content { display: flex; flex-direction: column; gap: 24px; max-width: 500px; align-items: flex-start; }
+        
+        .hero h1 {
+            font-size: 4rem !important; line-height: 0.9 !important;
+            text-shadow: 0 0 10px rgba(255, 0, 51, 0.6) !important; margin: 0 !important;
+        }
+        .hero h1 br { display: inline; }
+        .hero h1 span { color: var(--text-main) !important; text-shadow: none !important; }
+        
+        .hero p {
+            font-size: 0.875rem !important; color: var(--text-muted) !important;
+            margin: 0 !important; max-width: 320px; line-height: 1.625;
+        }
+        .hero p::before {
+            content: 'World First Biometric Interface'; display: block; color: var(--primary);
+            font-family: var(--font-heading); font-size: 12px; letter-spacing: -0.05em;
+            text-transform: uppercase; font-weight: 700; margin-bottom: 24px;
+        }
+
+        .hero .cta-btn {
+            background: transparent !important; color: var(--primary) !important;
+            border: 1px solid var(--primary) !important; box-shadow: none !important;
+        }
+        .hero .cta-btn:hover { background: rgba(255,0,51,0.1) !important; }
+
+        .hero-visual {
+            width: 100% !important; height: 450px !important; border: none !important;
+            background: transparent !important; border-radius: 0 !important; box-shadow: none !important;
+            display: flex; align-items: center; justify-content: center; position: relative;
+        }
+
+        .hero-visual::before {
+            content: '' !important; position: absolute; width: 384px; height: 384px;
+            border: 1px solid rgba(255,255,255,0.05); border-radius: 50%; z-index: 0; padding:0; text-align:left; color:transparent; font-family:inherit; opacity:1;
+        }
+        .hero-visual::after {
+            content: '' !important; position: absolute; width: 450px; height: 450px;
+            border: 1px solid rgba(255, 0, 51, 0.1); border-radius: 50%; z-index: 0;
+            animation: pulse-border 2s infinite alternate !important; opacity:1; padding:0; text-align:left; color:transparent; font-family:inherit;
+        }
+
+        @keyframes pulse-border {
+            0% { opacity: 0.5; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1.02); }
+        }
+
+        @media (max-width: 1024px) {
+            .hero { grid-template-columns: 1fr; padding-top: 100px; text-align: left !important; }
+            .hero-content { align-items: flex-start !important; }
+            .hero-visual { height: 350px !important; }
+        }
+
+        /* Utility for Sections */
+        .section-title {
+            text-align: left !important; font-size: 1.5rem !important; margin-bottom: 24px !important;
+            text-transform: uppercase; letter-spacing: 2px !important; font-family: var(--font-heading);
+            color: var(--text-main) !important;
+        }
+        .section-title span { color: var(--primary); }
+
+        /* 3. The Problem Section */
+        .problem { background: transparent !important; border: none !important; padding: 40px 10% !important; text-align: left !important; }
+        .problem p {
+            max-width: 100% !important; margin: 0 0 16px 0 !important; font-size: 0.875rem !important;
+            color: var(--text-muted) !important; border-left: 2px solid var(--primary);
+            background: var(--surface); backdrop-filter: blur(10px); padding: 16px !important;
+        }
+
+        /* Grids */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px !important; }
+
+        .card {
+            background: rgba(20,20,20,0.8) !important; border: 1px solid var(--border-light) !important;
+            backdrop-filter: blur(10px); padding: 24px !important; border-radius: 0 !important;
+            transition: all 0.3s ease; position: relative; display: flex; flex-direction: column; gap: 12px;
+        }
+        .card::before { display: none; }
+        .card:hover { border-color: rgba(255,0,51,0.5) !important; transform: none !important; box-shadow: none !important; }
+
+        .card h3 {
+            font-size: 0.875rem !important; color: var(--primary) !important; letter-spacing: 0px !important;
+            text-transform: uppercase; border-bottom: 1px solid var(--border-light); padding-bottom: 8px; margin: 0 !important;
+        }
+        .card p { color: var(--text-muted) !important; font-size: 0.75rem !important; line-height: 1.5; }
+        .card-icon { font-size: 1.25rem !important; color: var(--text-main) !important; margin: 0 !important; }
+
+        /* 4 & 5. Tech BG overrides */
+        .tech-bg { background: transparent !important; }
+        #ai-health { background: transparent !important; }
+
+        /* 6. App Integration */
+        .app-section {
+            display: grid !important; grid-template-columns: 1fr 1fr !important; align-items: center;
+            gap: 40px !important; background: transparent !important; border-top: none !important;
+        }
+        .app-content p, .app-content ul {
+            font-size: 0.75rem !important; color: var(--text-muted) !important;
+            background: rgba(255,0,51,0.05); border: 1px solid rgba(255,0,51,0.2);
+            padding: 16px; margin: 0 0 16px 0 !important; list-style: none;
+        }
+        .app-content ul li { border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 8px; }
+        .app-content ul li:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+
+        .app-visual {
+            height: 300px !important; border: 1px solid var(--border-light) !important;
+            background: var(--surface) !important; box-shadow: none !important; border-radius: 0 !important;
+        }
+        .app-visual::after { font-size: 0.875rem; color: var(--text-muted) !important; letter-spacing: 1px; text-transform: uppercase; }
+
+        @media (max-width: 900px) { .app-section { grid-template-columns: 1fr !important; } }
+
+        /* 7. Business Model Section */
+        .business .card { text-align: left !important; border-top: 1px solid var(--border-light) !important; }
+        .business-highlight { font-family: var(--font-heading); font-size: 1.125rem !important; color: var(--text-main) !important; margin: 8px 0 !important; text-transform: uppercase; }
+
+        /* 8. Team Section */
+        .team { background: transparent !important; border-top: none !important; }
+        .team > p { display: none; } /* Hide the subtitle to match minimal elegant style */
+        .team-grid { display: grid; grid-template-columns: repeat(2, 1fr) !important; gap: 8px !important; }
+        @media (min-width: 600px) { .team-grid { grid-template-columns: repeat(3, 1fr) !important; } }
+        @media (min-width: 900px) { .team-grid { grid-template-columns: repeat(6, 1fr) !important; } }
+
+        .team-card {
+            background: rgba(20,20,20,0.8) !important; padding: 16px 8px !important; text-align: center;
+            border: 1px solid var(--border-light) !important; border-radius: 0 !important;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .team-card:hover { border-color: rgba(255,0,51,0.3) !important; background: rgba(255,0,51,0.05) !important; transform: none !important; box-shadow: none !important; }
+        .team-avatar { display: none !important; } /* Hide avatars */
+        .team-card h4 { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); margin: 0; font-family: var(--font-body); font-weight: 700; }
+        .team-title { display: none !important; }
+
+        /* 9. Footer */
+        footer {
+            background: var(--bg-color) !important; padding: 24px 5% !important; border-top: 1px solid var(--border-light) !important;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 24px;
+            font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.4); letter-spacing: 1px;
+        }
+        
+        .footer-brand, .newsletter { max-width: none !important; }
+        .footer-brand p { margin: 0 !important; font-size: 10px !important; text-transform: uppercase; }
+        .footer-brand .logo { display: none !important; }
+        .footer-brand p:first-of-type { display: none; } /* hide long text */
+
+        .newsletter h4, .newsletter p { display: none !important; }
+        
+        .newsletter form { display: flex; margin-top: 0 !important; border: 1px solid rgba(255,255,255,0.2); height: 32px; }
+        .newsletter input { background: transparent !important; border: none !important; padding: 0 12px !important; color: #fff; font-size: 10px; letter-spacing: 1px; border-radius: 0 !important; outline: none; flex: 1; }
+        .newsletter input:focus { border-color: transparent !important; }
+        .newsletter button { background: rgba(255,255,255,0.1) !important; color: #fff !important; border: none; padding: 0 12px !important; font-weight: 600; font-family: inherit; cursor: pointer; border-radius: 0 !important; text-transform: uppercase; font-size: 10px; }
+        .newsletter button:hover { background: var(--primary) !important; }
+
+        .socials { display: flex; gap: 24px; margin-top: 0 !important; }
+        .social-placeholder { width: auto !important; height: auto !important; background: transparent !important; border-radius: 0 !important; font-size: 10px !important; color: inherit !important; text-transform: uppercase; transition: color 0.3s; }
+        .social-placeholder:hover { color: var(--primary) !important; transform: none !important; box-shadow: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Navigation Bar -->
+    <nav>
+        <div class="logo">
+            <!-- Ensure your uploaded image is named logo.png and is located in the root folder -->
+            <img src="/logo.png" alt="Tachyon Logo" class="logo-img" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'32\' height=\'32\' viewBox=\'0 0 24 24\' fill=\'%23FF0033\'><path d=\'M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z\'/></svg>'">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#ai-health">How It Works</a></li>
+            <li><a href="#app">App</a></li>
+            <li><a href="#business">Business Model</a></li>
+            <li><a href="#team">Team</a></li>
+        </ul>
+        <button class="cta-btn" onclick="scrollToCTA()">Pre-Order Now</button>
+    </nav>
+
+    <!-- 2. Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>World's First <br><span>Smart Biometric Mouse</span></h1>
+            <p>Experience real-time health monitoring directly at your fingertips. No extra wearables required. Designed for professionals and gamers to perform at their peak without compromising their long-term well-being.</p>
+            <button class="cta-btn" style="padding: 15px 40px; font-size: 1.1rem;" onclick="scrollToFeatures()">Discover the Future of Health</button>
+        </div>
+        <div class="hero-visual"></div>
+    </section>
+
+    <!-- 3. The Problem Section -->
+    <section class="container problem">
+        <h2 class="section-title">The <span>Problem</span></h2>
+        <p>In today's fast-paced digital world, office workers, professionals, and gamers spend hours anchored to their desks. The result? Unseen stress accumulation, rising blood pressure, and long-term physical injuries like office syndrome.</p>
+        <p>Current health wearables are intrusive, battery-draining, and easily forgotten. We need a solution that integrates seamlessly into the tools we already touch every single day.</p>
+    </section>
+
+    <!-- 4. Core Features Section -->
+    <section id="features" class="container tech-bg">
+        <h2 class="section-title">Core <span>Features</span></h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">🖱️</div>
+                <h3>Pro Mouse Functions</h3>
+                <p>Designed for power users. Experience flawlessly responsive DPI adjustment, programmable macro hotkeys, and laser-precise pointer capabilities for presentation and productivity superiority.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">✋</div>
+                <h3>Vertical Ergonomics</h3>
+                <p>A masterfully sculpted vertical design that enforces a natural handshake position. Significantly reduces wrist strain, forearm pronation, and the long-term risk of carpal tunnel syndrome.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🧩</div>
+                <h3>Modular Architecture</h3>
+                <p>Hardware that adapts to you. Includes assembling features such as a detachable fingertip ring component, transforming your desktop mouse into a powerful remote presentation controller.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. Biometric & AI Capabilities Section -->
+    <section id="ai-health" class="container" style="background: var(--surface);">
+        <h2 class="section-title">Biometric & <span>AI Capabilities</span></h2>
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">🩸</div>
+                <h3>Medical-Grade Sensors</h3>
+                <p>Equipped with built-in SpO2 and Heart Rate monitors. Subtly reads your biometrics through normal contact with the mouse surface, turning your palm into a diagnostic hub.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">🧠</div>
+                <h3>AI Prediction Engine</h3>
+                <p>Utilizes advanced machine learning algorithms to process raw data and instantly predict Non-Invasive Blood Pressure (NIBP), Respiratory Rate (RR), and subtle emotional stress states.</p>
+            </div>
+            <div class="card">
+                <div class="card-icon">⚠️</div>
+                <h3>Real-Time Health Alerts</h3>
+                <p>Never push yourself to the breaking point again. The integrated health alarm system instantly alerts you visually to abnormal stress or fatigue levels, prompting necessary breaks.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. Ecosystem / App Integration Section -->
+    <section id="app" class="container app-section">
+        <div class="app-content">
+            <h2 class="section-title" style="text-align: left;">Seamless <span>Ecosystem</span></h2>
+            <p style="color: var(--text-muted); font-size: 1.1rem; margin-bottom: 20px;">Your health data shouldn't be fragmented. The Tachyon Companion App syncs instantly, tracking your physiological data across days, weeks, and months in a centralized hub.</p>
+            <ul style="color: var(--text-muted); margin-left: 20px; margin-bottom: 30px; line-height: 2;">
+                <li>Comprehensive dashboard tracking your daily HR and SpO2 trends.</li>
+                <li>AI-driven personalized health recommendations and posture alerts.</li>
+                <li>Exportable health analytics to share with your medical professionals.</li>
+                <li>Gaming overlay mode for streamers tracking adrenaline in real-time.</li>
+            </ul>
+        </div>
+        <div class="app-visual"></div>
+    </section>
+
+    <!-- 7. Business Model Section -->
+    <section id="business" class="container">
+        <h2 class="section-title">Business <span>Model</span></h2>
+        <div class="grid" style="max-width: 900px; margin: auto;">
+            <div class="card" style="border-top: 3px solid #333;">
+                <h3>Hardware Selection</h3>
+                <div class="business-highlight">One-Time Payment</div>
+                <p>Purchase the physical Tachyon Smart Biometric Mouse. Designed to last. Own your hardware free and clear, forever, with full local functionality.</p>
+            </div>
+            <div class="card" style="border-top: 3px solid var(--primary);">
+                <h3>Software Hub</h3>
+                <div class="business-highlight">Freemium + Premium</div>
+                <p>Free base tracking usage forever. Opt into our premium subscription for profound historical analytics, deep AI coaching, and preventative medical insights.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. About the Team Section -->
+    <section id="team" class="container team">
+        <h2 class="section-title">Meet Team <span>Hypertension</span></h2>
+        <p style="text-align: center; color: var(--text-muted); margin-top: -40px; margin-bottom: 60px;">Innovators from King Mongkut's University of Technology North Bangkok</p>
+        <div class="team-grid">
+            <div class="team-card">
+                <div class="team-avatar">Pisit</div>
+                <h4>Pisit</h4>
+                <div class="team-title">Core Member</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">Papan</div>
+                <h4>Papangkorn</h4>
+                <div class="team-title">Core Member</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">Worra</div>
+                <h4>Worraprach</h4>
+                <div class="team-title">Core Member</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">Kamol</div>
+                <h4>Kamol</h4>
+                <div class="team-title">Core Member</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">Natth</div>
+                <h4>Natthaphat</h4>
+                <div class="team-title">Core Member</div>
+            </div>
+            <div class="team-card">
+                <div class="team-avatar">Chaya</div>
+                <h4>Chayakorn</h4>
+                <div class="team-title">Core Member</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 9. Footer -->
+    <footer>
+        <div class="footer-brand">
+            <div class="logo">
+                <img src="/logo.png" alt="Tachyon Logo" class="logo-img" style="height: 25px;" onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'25\' height=\'25\' viewBox=\'0 0 24 24\' fill=\'%23FF0033\'><path d=\'M12 .587l3.668 7.568 8.332 1.151-6.064 5.828 1.48 8.279-7.416-3.967-7.417 3.967 1.481-8.279-6.064-5.828 8.332-1.151z\'/></svg>'">
+            </div>
+            <p>Developed by Team Hypertension from King Mongkut's University of Technology North Bangkok.</p>
+            <p style="margin-top: 5px;">&copy; 2026 Tachyon Biometrics. All rights reserved.</p>
+            <div class="socials">
+                <div class="social-placeholder">TK</div>
+                <div class="social-placeholder">FB</div>
+                <div class="social-placeholder">IG</div>
+                <div class="social-placeholder">X</div>
+            </div>
+        </div>
+        <div class="newsletter">
+            <h4>Stay Updated</h4>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Subscribe for exclusive product drops, presale access, and health tech news.</p>
+            <form onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
+                <input type="email" placeholder="Enter your email" required>
+                <button type="submit">JOIN</button>
+            </form>
+        </div>
+    </footer>
+
+    <!-- JavaScript Interactions -->
+    <script>
+        function scrollToCTA() {
+            document.getElementById('business').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToFeatures() {
+            document.getElementById('features').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
